@@ -12,6 +12,9 @@ provider:
 custom:
   webpack:
     packager: yarn
+    includeModule:
+      forceIncludes:
+        - sharp
 
 functions:
   OriginResponse:

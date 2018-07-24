@@ -26,4 +26,5 @@ module.exports = {
       { test: /\.tsx?$/, loader: 'ts-loader' },
     ],
   },
+  exclude: ["aws-sdk"]
 };
