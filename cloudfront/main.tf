@@ -5,6 +5,8 @@ CDN
 resource "aws_cloudfront_distribution" "image" {
   enabled = true
 
+  is_ipv6_enabled = true
+
   origin {
     origin_id   = "${aws_s3_bucket.image_origin.id}"
     domain_name = "${aws_s3_bucket.image_origin.bucket_domain_name}"
