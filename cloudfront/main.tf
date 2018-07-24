@@ -52,6 +52,7 @@ resource "aws_cloudfront_distribution" "image" {
   }
 
   tags {
+    Name        = "image-resize.dev.CDN"
     Environment = "dev"
   }
 }
@@ -66,6 +67,11 @@ Origin
 
 resource "aws_s3_bucket" "image_origin" {
   bucket = "${var.origin_s3_bucket_name}"
+
+  tags {
+    Name        = "image-resize.dev.origin"
+    Environment = "dev"
+  }
 }
 
 resource "aws_s3_bucket_policy" "image_origin" {
