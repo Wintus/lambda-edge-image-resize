@@ -14,9 +14,5 @@ custom:
     packager: yarn
 
 functions:
-  hello:
-    handler: handler.hello
-    events:
-      - http:
-          method: get
-          path: hello
+  OriginResponse:
+    handler: handler.originResponse
