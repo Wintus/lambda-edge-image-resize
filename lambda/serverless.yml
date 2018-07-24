@@ -6,7 +6,8 @@ plugins:
 
 provider:
   name: aws
-  runtime: nodejs8.10
+  region: us-east-1 # Lambda@Edge restriction
+  runtime: nodejs8.10 # Lambda@Edge restriction
 
 custom:
   webpack:
