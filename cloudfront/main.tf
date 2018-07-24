@@ -38,6 +38,7 @@ resource "aws_cloudfront_distribution" "image" {
     viewer_protocol_policy = "allow-all"
   }
 
+  # TODO: add alias domain & cert
   viewer_certificate {
     cloudfront_default_certificate = true
   }
