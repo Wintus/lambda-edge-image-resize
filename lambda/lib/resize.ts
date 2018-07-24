@@ -9,7 +9,7 @@ export interface Query {
   webp?: boolean;
 }
 
-export const resize: Resize = ({ width, height, webp }) => async data => {
+export const resize: Resize = query => async data => {
   const image = sharp(data);
   const meta = await image.metadata();
 
@@ -19,6 +19,8 @@ export const resize: Resize = ({ width, height, webp }) => async data => {
   }
 
   image.rotate(); // before removing metadata
+
+  const { width, height, webp } = query;
 
   // resize
   const w = min(meta.width, width);
@@ -30,7 +32,7 @@ export const resize: Resize = ({ width, height, webp }) => async data => {
     image.webp();
   }
 
-  return image.toBuffer();
+  return await image.toBuffer();
 };
 
 // return null if null
