@@ -20,7 +20,8 @@
     "ts-loader": "^4.2.0",
     "tslint": "^5.11.0",
     "typescript": "^2.8.1",
-    "webpack": "^4.5.0"
+    "webpack": "^4.5.0",
+    "webpack-node-externals": "^1.7.2"
   },
   "author": "The serverless webpack authors (https://github.com/elastic-coders/serverless-webpack)",
   "license": "MIT"
