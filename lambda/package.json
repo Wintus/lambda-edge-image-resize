@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "sharp": "^0.20.5",
+    "sharp": "^0.24.0",
     "source-map-support": "^0.5.0"
   },
   "devDependencies": {
