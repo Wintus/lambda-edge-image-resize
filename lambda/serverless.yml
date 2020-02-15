@@ -1,5 +1,5 @@
 service:
-  name: image-rasize
+  name: image-resize
 
 plugins:
   - serverless-webpack
