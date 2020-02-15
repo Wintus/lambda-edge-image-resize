@@ -4,7 +4,10 @@
   "description": "Serverless webpack example using Typescript",
   "main": "handler.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "install:all": "yarn; yarn install:layer",
+    "install:layer": "cd layers/sharp; yarn",
+    "build": "sls package",
+    "deploy": "sls deploy -v"
   },
   "dependencies": {
     "sharp": "^0.24.0",

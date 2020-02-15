@@ -9,13 +9,19 @@ provider:
   region: us-east-1 # Lambda@Edge restriction
   runtime: nodejs10.x # Lambda@Edge restriction
 
+layers:
+  sharp:
+    path: layers/sharp # for native Node.js Add-on
+
 custom:
   webpack:
     packager: yarn
     includeModules:
-      forceInclude:
-        - sharp # for native Node.js Add-on
+      forceExclude:
+        - sharp # included in the layer
 
 functions:
   OriginResponse:
     handler: handler.originResponse
+    layers:
+      - Ref: SharpLambdaLayer
