@@ -24,4 +24,4 @@ functions:
   OriginResponse:
     handler: handler.originResponse
     layers:
-      - { Ref: SharpLambdaLayer }
+      - Ref: SharpLambdaLayer
