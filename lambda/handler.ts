@@ -25,7 +25,7 @@ const parseQuery = (queryString: string): Query => {
   const guard = (n?: number): number | null =>
     isFinite(n) && n > 0 ? n : null;
 
-  const parseNum = str =>
+  const parseNum: (str: string | string[]) => number = str =>
     guard(parseInt(value(str)));
 
   const { w, h, webp } = querystring.parse(queryString);
@@ -37,7 +37,15 @@ const parseQuery = (queryString: string): Query => {
   };
 };
 
-const resizeS3Image = ({ s3Object, query, result }) => {
+const resizeS3Image = <T extends CloudFrontResultResponse>({
+  s3Object,
+  query,
+  result,
+}: {
+  s3Object: Promise<S3.GetObjectOutput>;
+  query: Query;
+  result: T;
+}): Promise<T> => {
   return s3Object
     .then(data => data.Body)
     .then(Buffer.from)
