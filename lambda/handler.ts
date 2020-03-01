@@ -1,9 +1,6 @@
 import {
-  Callback,
-  CloudFrontResponseEvent,
+  CloudFrontResponseHandler,
   CloudFrontResultResponse,
-  Context,
-  Handler,
 } from "aws-lambda";
 import { S3 } from "aws-sdk";
 import querystring from "querystring";
@@ -68,28 +65,28 @@ const resizeS3Image = <T extends CloudFrontResultResponse>({
 };
 
 // noinspection JSUnusedGlobalSymbols
-export const originResponse: Handler = async (
-  event: CloudFrontResponseEvent,
-  context: Context,
-  cb: Callback,
-) => {
-  const { request, response } = event.Records[0].cf;
+export const originResponse: CloudFrontResponseHandler = async ({
+  Records: [
+    {
+      cf: {
+        request: { headers, uri, querystring: queryString },
+        response,
+      },
+    },
+  ],
+}) => {
   const result = response as CloudFrontResultResponse;
-  const uri = request.uri;
 
   // guard: check extension
   const ext = uri.split(".").pop();
   if (!ext.match(/jpe?g/)) {
     // response original
-    cb(null, response);
-    return;
+    return response;
   }
   // guard: check resize
-  const queryString = request.querystring;
   if (!queryString) {
     // response original
-    cb(null, response);
-    return;
+    return response;
   }
   // guard: origin status
   switch (response.status) {
@@ -103,23 +100,19 @@ export const originResponse: Handler = async (
         { key: "Content-Type", value: "text/plain" },
       ];
       result.body = `${uri} is not found.`;
-      cb(null, result);
-      return;
+      return result;
     case "304":
     default:
       // response original
-      cb(null, response);
-      return;
+      return response;
   }
 
   const query = parseQuery(queryString);
   console.log(query);
 
-  /**
-   * @see https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/RequestAndResponseBehaviorCustomOrigin.html#request-custom-headers-behavior
-   * @see https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/lambda-event-structure.html#lambda-event-structure-request
-   */
-  const hostname = request.headers.host[0].value;
+  const {
+    host: [{ value: hostname }],
+  } = headers;
   // guard s3 domain
   const domainRegex = /\.s3\.amazonaws\.com$/;
   if (!hostname.match(domainRegex)) {
@@ -135,6 +128,5 @@ export const originResponse: Handler = async (
       Key: key,
     })
     .promise();
-  const resizeResult = await resizeS3Image({ s3Object, query, result });
-  cb(null, resizeResult);
+  return await resizeS3Image({ s3Object, query, result });
 };
