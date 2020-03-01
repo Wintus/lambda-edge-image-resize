@@ -6,10 +6,8 @@ import {
   Handler,
 } from "aws-lambda";
 import { S3 } from "aws-sdk";
-
 import querystring from "querystring";
 import { isArray } from "util";
-
 import { Query, resize } from "./lib/resize";
 
 const parseQuery = (queryString: string): Query => {
