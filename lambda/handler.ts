@@ -27,7 +27,8 @@ const parseQuery = (queryString: string): Query => {
 type S3Object = S3.GetObjectOutput;
 const s3 = new S3();
 
-const resizeS3Image = <T extends CloudFrontResultResponse>({
+// destructive
+const resizeS3Image = async <T extends CloudFrontResultResponse>({
   s3Object,
   query,
   result,
@@ -36,32 +37,31 @@ const resizeS3Image = <T extends CloudFrontResultResponse>({
   query: Query;
   result: T;
 }): Promise<T> => {
-  return s3Object
-    .then(data => data.Body)
-    .then(Buffer.from)
-    .then(resize(query))
-    .then(buffer => {
-      // response resized image
-      const encoding = "base64";
-      result.body = buffer.toString(encoding);
-      result.bodyEncoding = encoding;
-      if (query.webp) {
-        result.headers["content-type"] = [
-          { key: "Content-Type", value: "image/webp" },
-        ];
-      }
-      return result;
-    })
-    .catch(e => {
-      // response any error
-      result.status = "403";
+  try {
+    const buffer = await s3Object
+      .then(data => data.Body)
+      .then(Buffer.from)
+      .then(resize(query));
+    // response resized image
+    const encoding = "base64";
+    result.body = buffer.toString(encoding);
+    result.bodyEncoding = encoding;
+    if (query.webp) {
       result.headers["content-type"] = [
-        { key: "Content-Type", value: "text/plain" },
+        { key: "Content-Type", value: "image/webp" },
       ];
-      result.body = e.toString();
-      console.error(e);
-      return result;
-    });
+    }
+    return result;
+  } catch (e) {
+    // response any error
+    result.status = "403";
+    result.headers["content-type"] = [
+      { key: "Content-Type", value: "text/plain" },
+    ];
+    result.body = e.toString();
+    console.error(e);
+    return result;
+  }
 };
 
 // noinspection JSUnusedGlobalSymbols
