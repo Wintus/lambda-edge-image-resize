@@ -18,6 +18,62 @@ type Result = CloudFrontResultResponse;
 // 型合わせ
 const resultResponse = (response: CloudFrontResponse): Result => response;
 
+const parseQuery = (queryString: string): Query => {
+  const value = (str?: string | string[]): string =>
+    isArray(str) ? str[0] : str;
+
+  const guard = (n?: number): number | null =>
+    isFinite(n) && n > 0 ? n : null;
+
+  const parseNum: (str: string | string[]) => number = str =>
+    guard(parseInt(value(str)));
+
+  const { w, h, webp } = querystring.parse(queryString);
+
+  return {
+    width: parseNum(w),
+    height: parseNum(h),
+    webp: Boolean(webp),
+  };
+};
+
+const resizeS3Image = <T extends CloudFrontResultResponse>({
+  s3Object,
+  query,
+  result,
+}: {
+  s3Object: Promise<S3.GetObjectOutput>;
+  query: Query;
+  result: T;
+}): Promise<T> => {
+  return s3Object
+    .then(data => data.Body)
+    .then(Buffer.from)
+    .then(resize(query))
+    .then(buffer => {
+      // response resized image
+      const encoding = "base64";
+      result.body = buffer.toString(encoding);
+      result.bodyEncoding = encoding;
+      if (query.webp) {
+        result.headers["content-type"] = [
+          { key: "Content-Type", value: "image/webp" },
+        ];
+      }
+      return result;
+    })
+    .catch(e => {
+      // response any error
+      result.status = "403";
+      result.headers["content-type"] = [
+        { key: "Content-Type", value: "text/plain" },
+      ];
+      result.body = e.toString();
+      console.error(e);
+      return result;
+    });
+};
+
 // noinspection JSUnusedGlobalSymbols
 export const originResponse: Handler = async (
   event: CloudFrontResponseEvent,
@@ -89,51 +145,4 @@ export const originResponse: Handler = async (
     .promise();
   const resizeResult = await resizeS3Image({ s3Object, query, result });
   cb(null, resizeResult);
-};
-
-const parseQuery = (queryString: string): Query => {
-  const value = (str?: string | string[]): string =>
-    isArray(str) ? str[0] : str;
-
-  const guard = (n?: number): number | null =>
-    isFinite(n) && n > 0 ? n : null;
-
-  const parseNum = str => guard(parseInt(value(str)));
-
-  const { w, h, webp } = querystring.parse(queryString);
-
-  return {
-    width: parseNum(w),
-    height: parseNum(h),
-    webp: Boolean(webp),
-  };
-};
-
-const resizeS3Image = ({ s3Object, query, result }) => {
-  return s3Object
-    .then(data => data.Body)
-    .then(Buffer.from)
-    .then(resize(query))
-    .then(buffer => {
-      // response resized image
-      const encoding = "base64";
-      result.body = buffer.toString(encoding);
-      result.bodyEncoding = encoding;
-      if (query.webp) {
-        result.headers["content-type"] = [
-          { key: "Content-Type", value: "image/webp" },
-        ];
-      }
-      return result;
-    })
-    .catch(e => {
-      // response any error
-      result.status = "403";
-      result.headers["content-type"] = [
-        { key: "Content-Type", value: "text/plain" },
-      ];
-      result.body = e.toString();
-      console.error(e);
-      return result;
-    });
 };
