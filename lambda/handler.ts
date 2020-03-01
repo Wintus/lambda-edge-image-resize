@@ -53,13 +53,13 @@ const resizeS3Image = async <T extends CloudFrontResultResponse>({
     }
     return result;
   } catch (e) {
+    console.error(e);
     // response any error
     result.status = "403";
     result.headers["content-type"] = [
       { key: "Content-Type", value: "text/plain" },
     ];
     result.body = e.toString();
-    console.error(e);
     return result;
   }
 };
@@ -108,7 +108,7 @@ export const originResponse: CloudFrontResponseHandler = async ({
   }
 
   const query = parseQuery(queryString);
-  console.log(query);
+  console.log({ query });
 
   const {
     host: [{ value: hostname }],
@@ -120,7 +120,7 @@ export const originResponse: CloudFrontResponseHandler = async ({
   }
   const bucket = hostname.replace(domainRegex, "");
   const key = uri.slice(1); // remove first `/`
-  console.log({ s3uri: `s3://${bucket}${uri}` });
+  console.log("S3 URI:", `s3://${bucket}${uri}`);
 
   const s3Object = s3
     .getObject({
