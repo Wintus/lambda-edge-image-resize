@@ -1,6 +1,5 @@
 import {
   Callback,
-  CloudFrontResponse,
   CloudFrontResponseEvent,
   CloudFrontResultResponse,
   Context,
@@ -12,11 +11,6 @@ import querystring from "querystring";
 import { isArray } from "util";
 
 import { Query, resize } from "./lib/resize";
-
-type Result = CloudFrontResultResponse;
-
-// 型合わせ
-const resultResponse = (response: CloudFrontResponse): Result => response;
 
 const parseQuery = (queryString: string): Query => {
   const value = (str?: string | string[]): string =>
@@ -81,7 +75,7 @@ export const originResponse: Handler = async (
   cb: Callback,
 ) => {
   const { request, response } = event.Records[0].cf;
-  const result = resultResponse(response);
+  const result = response as CloudFrontResultResponse;
   const uri = request.uri;
 
   // guard: check extension
