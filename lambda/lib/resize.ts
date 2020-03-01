@@ -1,15 +1,17 @@
-import * as sharp from "sharp";
+import sharp from "sharp";
 
 type Data = Buffer | string;
-type Resize = (query: Query) => (data: Data) => Promise<Buffer>;
-
-export interface Query {
+export type Query = {
   width?: number;
   height?: number;
   webp?: boolean;
-}
+};
 
-export const resize: Resize = query => async data => {
+// return null if null
+const min = (defaultNum: number, n?: number): number | null =>
+  n && Math.min(defaultNum, n);
+
+export const resize = (query: Query) => async (data: Data): Promise<Buffer> => {
   const image = sharp(data);
   const meta = await image.metadata();
 
@@ -34,6 +36,3 @@ export const resize: Resize = query => async data => {
 
   return await image.toBuffer();
 };
-
-// return null if null
-const min = (defaultNum: number, n?: number) => n && Math.min(defaultNum, n);
