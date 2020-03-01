@@ -3,7 +3,7 @@ import {
   CloudFrontResultResponse,
 } from "aws-lambda";
 import { S3 } from "aws-sdk";
-import querystring from "querystring";
+import qs from "querystring";
 import { isArray } from "util";
 import { Query, resize } from "./lib/resize";
 
@@ -16,7 +16,7 @@ const parseNum: (str: string | string[]) => number = str =>
   guard(parseInt(value(str)));
 
 const parseQuery = (queryString: string): Query => {
-  const { w, h, webp } = querystring.parse(queryString);
+  const { w, h, webp } = qs.parse(queryString);
   return {
     width: parseNum(w),
     height: parseNum(h),
@@ -69,7 +69,7 @@ export const originResponse: CloudFrontResponseHandler = async ({
   Records: [
     {
       cf: {
-        request: { headers, uri, querystring: queryString },
+        request: { headers, uri, querystring },
         response,
       },
     },
@@ -83,7 +83,7 @@ export const originResponse: CloudFrontResponseHandler = async ({
     return response;
   }
   // guard: check resize
-  if (!queryString) {
+  if (!querystring) {
     // response original
     return response;
   }
@@ -106,7 +106,7 @@ export const originResponse: CloudFrontResponseHandler = async ({
       break;
   }
 
-  const query = parseQuery(queryString);
+  const query = parseQuery(querystring);
   console.log({ query });
 
   const {
