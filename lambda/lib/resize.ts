@@ -1,12 +1,11 @@
 import * as sharp from "sharp";
 
 type Data = Buffer | string;
-
-export interface Query {
+export type Query = {
   width?: number;
   height?: number;
   webp?: boolean;
-}
+};
 
 export const resize = (query: Query) => async (data: Data): Promise<Buffer> => {
   const image = sharp(data);
