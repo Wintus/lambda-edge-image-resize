@@ -8,7 +8,8 @@ export type Query = {
 };
 
 // return null if null
-const min = (defaultNum: number, n?: number) => n && Math.min(defaultNum, n);
+const min = (defaultNum: number, n?: number): number | null =>
+  n && Math.min(defaultNum, n);
 
 export const resize = (query: Query) => async (data: Data): Promise<Buffer> => {
   const image = sharp(data);
