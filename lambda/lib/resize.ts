@@ -1,4 +1,4 @@
-import * as sharp from "sharp";
+import sharp from "sharp";
 
 type Data = Buffer | string;
 export type Query = {

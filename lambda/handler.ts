@@ -8,7 +8,7 @@ import {
 } from "aws-lambda";
 import { S3 } from "aws-sdk";
 
-import * as querystring from "querystring";
+import querystring from "querystring";
 import { isArray } from "util";
 
 import { Query, resize } from "./lib/resize";
