@@ -78,8 +78,7 @@ export const originResponse: CloudFrontResponseHandler = async ({
   const result = response as CloudFrontResultResponse;
 
   // guard: check extension
-  const ext = uri.split(".").pop();
-  if (!ext.match(/jpe?g/)) {
+  if (!uri.match(/\.jpe?g$/)) {
     // response original
     return response;
   }
