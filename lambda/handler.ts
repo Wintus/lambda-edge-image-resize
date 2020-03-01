@@ -27,12 +27,14 @@ const parseQuery = (queryString: string): Query => {
   };
 };
 
+type S3Object = S3.GetObjectOutput;
+
 const resizeS3Image = <T extends CloudFrontResultResponse>({
   s3Object,
   query,
   result,
 }: {
-  s3Object: Promise<S3.GetObjectOutput>;
+  s3Object: Promise<S3Object>;
   query: Query;
   result: T;
 }): Promise<T> => {
