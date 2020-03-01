@@ -28,6 +28,7 @@ const parseQuery = (queryString: string): Query => {
 };
 
 type S3Object = S3.GetObjectOutput;
+const s3 = new S3();
 
 const resizeS3Image = <T extends CloudFrontResultResponse>({
   s3Object,
@@ -128,7 +129,6 @@ export const originResponse: Handler = async (
   const key = uri.slice(1); // remove first `/`
   console.log({ s3uri: `s3://${bucket}${uri}` });
 
-  const s3 = new S3();
   const s3Object = s3
     .getObject({
       Bucket: bucket,
