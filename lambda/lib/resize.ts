@@ -7,6 +7,9 @@ export type Query = {
   webp?: boolean;
 };
 
+// return null if null
+const min = (defaultNum: number, n?: number) => n && Math.min(defaultNum, n);
+
 export const resize = (query: Query) => async (data: Data): Promise<Buffer> => {
   const image = sharp(data);
   const meta = await image.metadata();
@@ -32,6 +35,3 @@ export const resize = (query: Query) => async (data: Data): Promise<Buffer> => {
 
   return await image.toBuffer();
 };
-
-// return null if null
-const min = (defaultNum: number, n?: number) => n && Math.min(defaultNum, n);
