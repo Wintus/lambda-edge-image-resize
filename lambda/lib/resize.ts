@@ -1,7 +1,6 @@
 import * as sharp from "sharp";
 
 type Data = Buffer | string;
-type Resize = (query: Query) => (data: Data) => Promise<Buffer>;
 
 export interface Query {
   width?: number;
@@ -9,7 +8,7 @@ export interface Query {
   webp?: boolean;
 }
 
-export const resize: Resize = query => async data => {
+export const resize = (query: Query) => async (data: Data): Promise<Buffer> => {
   const image = sharp(data);
   const meta = await image.metadata();
 
