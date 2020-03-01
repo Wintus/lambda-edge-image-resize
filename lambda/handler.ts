@@ -89,9 +89,6 @@ export const originResponse: CloudFrontResponseHandler = async ({
   }
   // guard: origin status
   switch (response.status) {
-    case "200":
-      // keep going
-      break;
     case "404":
       // response not found
       result.status = "404";
@@ -104,6 +101,9 @@ export const originResponse: CloudFrontResponseHandler = async ({
     default:
       // response original
       return response;
+    case "200":
+      // keep going
+      break;
   }
 
   const query = parseQuery(queryString);
