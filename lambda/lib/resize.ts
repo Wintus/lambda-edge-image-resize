@@ -1,6 +1,6 @@
 import sharp from "sharp";
 
-type Data = Buffer | string;
+type Data = Exclude<Parameters<typeof sharp>[0], sharp.SharpOptions>;
 export type Query = {
   width?: number;
   height?: number;
