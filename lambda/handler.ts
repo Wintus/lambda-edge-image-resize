@@ -107,7 +107,7 @@ export const originResponse: CloudFrontResponseHandler = async ({
   }
 
   const query = parseQuery(querystring);
-  console.log({ query });
+  console.debug({ query });
 
   const {
     host: [{ value: hostname }],
