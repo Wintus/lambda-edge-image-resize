@@ -3,11 +3,7 @@
     "es6": true,
     "node": true
   },
-  "extends": [
-    "standard-with-typescript",
-    "plugin:prettier/recommended",
-    "prettier/@typescript-eslint"
-  ],
+  "extends": ["standard-with-typescript"],
   "globals": {
     "Atomics": "readonly",
     "SharedArrayBuffer": "readonly"
@@ -17,5 +13,7 @@
     "ecmaVersion": 2018,
     "sourceType": "module"
   },
-  "rules": {}
+  "rules": {
+    "comma-dangle": "off"
+  }
 }
