@@ -1,14 +1,10 @@
-import {
-  CloudFrontResponseHandler,
-  CloudFrontResultResponse
-} from 'aws-lambda'
+import { CloudFrontResponseHandler, CloudFrontResultResponse } from 'aws-lambda'
 import { S3 } from 'aws-sdk'
 import qs from 'querystring'
-import { isArray } from 'util'
 import { Query, resize } from './lib/resize'
 
 const value = (str?: string | string[]): string =>
-  isArray(str) ? str[0] : str
+  Array.isArray(str) ? str[0] : str
 
 const guard = (n?: number): number | null => (isFinite(n) && n > 0 ? n : null)
 
@@ -78,12 +74,12 @@ export const originResponse: CloudFrontResponseHandler = async ({
   const result = response as CloudFrontResultResponse
 
   // guard: check extension
-  if (!uri.match(/\.jpe?g$/)) {
+  if (!/\.jpe?g$/.test(uri)) {
     // response original
     return response
   }
   // guard: check resize
-  if (!querystring) {
+  if (querystring !== '') {
     // response original
     return response
   }
@@ -114,7 +110,7 @@ export const originResponse: CloudFrontResponseHandler = async ({
   } = headers
   // guard s3 domain
   const domainRegex = /\.s3\.amazonaws\.com$/
-  if (!hostname.match(domainRegex)) {
+  if (!domainRegex.test(hostname)) {
     throw new Error(`invalid S3 hostname: ${hostname}`)
   }
   const bucket = hostname.replace(domainRegex, '')
@@ -127,5 +123,5 @@ export const originResponse: CloudFrontResponseHandler = async ({
       Key: key,
     })
     .promise()
-  return await resizeS3Image({ s3Object, query, result })
+  return resizeS3Image({ s3Object, query, result })
 }

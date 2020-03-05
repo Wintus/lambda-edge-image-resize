@@ -8,9 +8,9 @@ export type Query = {
   webp?: boolean
 }
 
-// return null if null
-const min = (defaultNum: number, n?: number): number | null =>
-  n && Math.min(defaultNum, n)
+// return undefined if missing
+const min = (defaultNum: number, n?: number): number | undefined =>
+  n != null ? Math.min(defaultNum, n) : undefined
 
 export const resize = (query: Query) => async (data: Data): Promise<Buffer> => {
   const image = sharp(data)
@@ -23,17 +23,15 @@ export const resize = (query: Query) => async (data: Data): Promise<Buffer> => {
 
   image.rotate() // before removing metadata
 
-  const { width, height, webp } = query
-
   // resize
-  const w = min(meta.width, width)
-  const h = min(meta.height, height)
+  const w = min(meta.width, query.width)
+  const h = min(meta.height, query.height)
   image.resize(w, h).max() // keep aspect ratio
 
   // convert
-  if (webp) {
+  if (query.webp) {
     image.webp()
   }
 
-  return await image.toBuffer()
+  return image.toBuffer()
 }
