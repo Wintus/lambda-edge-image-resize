@@ -73,16 +73,20 @@ export const originResponse: CloudFrontResponseHandler = async ({
 }) => {
   const result = response as CloudFrontResultResponse
 
-  // guard: check extension
-  if (!/\.jpe?g$/.test(uri)) {
+  const isJpeg = response.headers['content-type']
+    .map(({ value }) => value)
+    .includes('image/jpeg')
+  if (!isJpeg) {
     // response original
     return response
   }
+
   // guard: check resize
   if (querystring !== '') {
     // response original
     return response
   }
+
   // guard: origin status
   switch (response.status) {
     case '404':
