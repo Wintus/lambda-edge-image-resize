@@ -14,7 +14,7 @@
     "sourceType": "module"
   },
   "rules": {
-    "comma-dangle": "off",
+    "comma-dangle": ["error", "always-multiline"],
     "@typescript-eslint/consistent-type-definitions": ["error", "type"]
   }
 }
