@@ -1,38 +1,36 @@
-import sharp from "sharp";
+import sharp from 'sharp'
 
-type Data = Exclude<Parameters<typeof sharp>[0], sharp.SharpOptions>;
+type Data = Exclude<Parameters<typeof sharp>[0], sharp.SharpOptions>
 export type Query = {
-  width?: number;
-  height?: number;
-  webp?: boolean;
-};
+  width?: number
+  height?: number
+  webp?: boolean
+}
 
-// return null if null
-const min = (defaultNum: number, n?: number): number | null =>
-  n && Math.min(defaultNum, n);
+// return undefined if missing
+const min = (defaultNum: number, n?: number): number | undefined =>
+  n != null ? Math.min(defaultNum, n) : undefined
 
 export const resize = (query: Query) => async (data: Data): Promise<Buffer> => {
-  const image = sharp(data);
-  const meta = await image.metadata();
+  const image = sharp(data)
+  const meta = await image.metadata()
 
   // guard
-  if (meta.format !== "jpeg") {
-    throw new Error(`file format is not jpeg but: ${meta.format}`);
+  if (meta.format !== 'jpeg') {
+    throw new Error(`file format is not jpeg but: ${meta.format}`)
   }
 
-  image.rotate(); // before removing metadata
-
-  const { width, height, webp } = query;
+  image.rotate() // before removing metadata
 
   // resize
-  const w = min(meta.width, width);
-  const h = min(meta.height, height);
-  image.resize(w, h).max(); // keep aspect ratio
+  const w = min(meta.width, query.width)
+  const h = min(meta.height, query.height)
+  image.resize(w, h).max() // keep aspect ratio
 
   // convert
-  if (webp) {
-    image.webp();
+  if (query.webp) {
+    image.webp()
   }
 
-  return await image.toBuffer();
-};
+  return image.toBuffer()
+}
