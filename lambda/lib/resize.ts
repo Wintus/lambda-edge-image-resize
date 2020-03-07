@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/consistent-type-definitions */
 import sharp from 'sharp'
 
 type Data = Exclude<Parameters<typeof sharp>[0], sharp.SharpOptions>
