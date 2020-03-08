@@ -25,7 +25,7 @@ export const resize = (query: Query) => async (data: Data): Promise<Buffer> => {
   // resize
   const w = min(meta.width, query.width)
   const h = min(meta.height, query.height)
-  image.resize(w, h).max() // keep aspect ratio
+  image.resize(w, h, { fit: 'contain' })
 
   // convert
   if (query.webp) {
